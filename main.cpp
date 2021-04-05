@@ -19,8 +19,26 @@ int main()
 		cout << "Print device #: " << i << endl;
 		WahlBlues::printDevice(devices[i]);
 		cout << endl;
+
+		if (devices[i].name == "IEEEPi") {
+			cout << "Found pi" << endl;
+			devices[i].port = 1;
+			WahlBlues::Client myClient = WahlBlues::Client(devices[i]);
+			if (myClient.connectToServer()) {
+				cout << "We connected to the server" << endl;
+				myClient.sendMessage("Whats up");
+				cout << "Sent message" << endl;
+				while (!myClient.getNumberOfMessages()) {
+
+				}
+				cout << "Message received: " << myClient.getNextMessage() << endl;
+				myClient.disconnect();
+				break;
+			}
+		}
 	}
 
 	WahlBlues::shutdown();
+	delete[] devices;
 	return 0;
 }
