@@ -27,7 +27,7 @@ namespace WahlBlues {
 		WSACleanup();
 	}
 
-    int discoverDevices(BTDevice*& devices) {
+    int discoverServices(BTDevice*& devices, std::string& addr_in, std::string& guidstr) {
 
         DWORD qs_len = sizeof(WSAQUERYSET);
         WSAQUERYSET* qs = (WSAQUERYSET*)malloc(qs_len);
@@ -36,8 +36,16 @@ namespace WahlBlues {
         ZeroMemory(qs, qs_len);
         qs->dwSize = sizeof(WSAQUERYSET);
         qs->dwNameSpace = NS_BTH;
-        DWORD flags = LUP_CONTAINERS; // LUP_CONTAINERS is specified for device discoveries, FLUSHCACHE clears old detected devices, rest are self explanatory
-        flags |= LUP_FLUSHCACHE | LUP_RETURN_NAME | LUP_RETURN_ADDR | LUP_RETURN_COMMENT | LUP_RETURN_TYPE;
+
+        std::string piAddr = "DC:A6:32:A3:49:79";
+        qs->lpszContext = (LPSTR)addr_in.c_str();
+        GUID guid = GuidHelper::StringToGuid(guidstr);
+        qs->lpServiceClassId = &guid;
+        qs->dwNumberOfCsAddrs = 0;
+
+        DWORD flags = LUP_FLUSHCACHE | LUP_RETURN_ADDR | LUP_RETURN_NAME;
+        //DWORD flags = LUP_CONTAINERS; // LUP_CONTAINERS is specified for device discoveries, FLUSHCACHE clears old detected devices, rest are self explanatory
+        //flags |= LUP_FLUSHCACHE | LUP_RETURN_NAME | LUP_RETURN_ADDR | LUP_RETURN_COMMENT | LUP_RETURN_TYPE;
 
         HANDLE h;
 
@@ -61,15 +69,15 @@ namespace WahlBlues {
 
                 std::string address = buf;
                 std::string name = qs->lpszServiceInstanceName;
-                std::string descr = "(Null)";
-                std::string uuid = GuidHelper::GuidToString(*(qs->lpServiceClassId));
-                if (qs->lpszComment != nullptr) {
-                    descr = qs->lpszComment;
-                }
+                //std::string descr = "(Null)";
+                //std::string uuid = GuidHelper::GuidToString(*(qs->lpServiceClassId));
+                //if (qs->lpszComment != nullptr) {
+                //    descr = qs->lpszComment;
+                //}
 
                 int port = ((SOCKADDR_BTH*)qs->lpcsaBuffer->RemoteAddr.lpSockaddr)->port;
 
-                BTDevice device = { address, port, name, descr, uuid };
+                BTDevice device = { address, port, name, "", "" };
                 devicesQueue.push(device);
 
             }
@@ -83,6 +91,7 @@ namespace WahlBlues {
                     done = true;
                 }
                 else {
+                    std::cout << "Bad error" << std::endl;
                     done = true;
                 }
             }
@@ -102,7 +111,7 @@ namespace WahlBlues {
 
     }
 
-	int discoverDevices(BTDevice* &devices, std::string& uuid) {
+	int discoverDevices(BTDevice* &devices) {
 
 		DWORD qs_len = sizeof(WSAQUERYSET);
 		WSAQUERYSET* qs = (WSAQUERYSET*)malloc(qs_len);
@@ -137,8 +146,7 @@ namespace WahlBlues {
                 std::string address = buf;
                 std::string name = qs->lpszServiceInstanceName;
                 std::string descr = "(Null)";
-                char* uuid = nullptr;
-                StringFromCLSID(*(qs->lpServiceClassId), (LPOLESTR*)uuid);
+                std::string uuid = GuidHelper::GuidToString(*(qs->lpServiceClassId));
                 if (qs->lpszComment != nullptr) {
                     descr = qs->lpszComment;
                 }
@@ -291,5 +299,7 @@ namespace WahlBlues {
         setServerInfo(server);
         return readyToConnect;
     }
+
+    
 
 }

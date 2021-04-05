@@ -40,7 +40,7 @@ namespace WahlBlues {
 	};
 
 	int discoverDevices(BTDevice*& devices);
-	int discoverDevices(BTDevice* &devices, std::string uuid);
+	int discoverServices(BTDevice*& devices, std::string& addr_in, std::string& guidstr);
 
 	void printDevice(BTDevice& device);
 
@@ -77,8 +77,10 @@ namespace WahlBlues {
 	};
 
 	class Server {
-		Server();
+		Server(std::string name, std::string uuid);
 		~Server();
+
+		bool advertise();
 	};
 
 }

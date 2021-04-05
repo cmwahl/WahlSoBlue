@@ -2,7 +2,7 @@
 
 namespace GuidHelper {
 	
-	GUID StringToGuid(std::string& str) {
+	GUID StringToGuid(const std::string& str) {
 		GUID guid;
 		sscanf(str.c_str(),
 			"{%8x-%4hx-%4hx-%2hhx%2hhx-%2hhx%2hhx%2hhx%2hhx%2hhx%2hhx}",
