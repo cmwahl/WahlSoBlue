@@ -27,7 +27,7 @@ namespace WahlBlues {
 		WSACleanup();
 	}
 
-    int discoverServices(BTDevice*& devices, std::string& addr_in, std::string& guidstr) {
+    int discoverServices(BTDevice*& devices, std::string addrIn, std::string guidstr) {
 
         DWORD qs_len = sizeof(WSAQUERYSET);
         WSAQUERYSET* qs = (WSAQUERYSET*)malloc(qs_len);
@@ -38,7 +38,7 @@ namespace WahlBlues {
         qs->dwNameSpace = NS_BTH;
 
         std::string piAddr = "DC:A6:32:A3:49:79";
-        qs->lpszContext = (LPSTR)addr_in.c_str();
+        qs->lpszContext = (LPSTR)addrIn.c_str();
         GUID guid = GuidHelper::StringToGuid(guidstr);
         qs->lpServiceClassId = &guid;
         qs->dwNumberOfCsAddrs = 0;
@@ -193,113 +193,5 @@ namespace WahlBlues {
         std::cout << "Port: " << device.port << std::endl;
         std::cout << "UUID: " << device.guid << std::endl;
     }
-
-
-    Client::Client(BTDevice& server) {
-        readyToConnect = true;
-        connected = false;
-        createClientSocket();
-        setServerInfo(server);
-        
-    }
-
-    void Client::createClientSocket() {
-        clientSocket = socket(AF_BTH, SOCK_STREAM, BTHPROTO_RFCOMM);
-        if (SOCKET_ERROR == clientSocket) {
-            std::cout << "Failed to create client socket" << std::endl;
-            readyToConnect = false;
-        }
-    }
-
-    void Client::setServerInfo(BTDevice &server) {
-        if (SOCKET_ERROR == WSAStringToAddress((LPSTR)server.address.c_str(), AF_BTH, NULL, (LPSOCKADDR)&serverInfo, &serverInfoLength)) {
-            std::cout << "Bad address" << std::endl;
-            readyToConnect = false;
-        }
-        serverInfo.port = server.port;
-    }
-    
-    bool Client::connectToServer() {
-        if (readyToConnect && !connected) {
-
-            if (SOCKET_ERROR != connect(clientSocket, (LPSOCKADDR)&serverInfo, serverInfoLength)) {
-                startReceiving();
-                connected = true;
-                return true;
-            }
-            else {
-                std::cout << "Failed to connect to server" << std::endl;
-                return false;
-            }
-        }
-
-        return false;
-    }
-
-    void Client::startReceiving() {
-        std::thread receiver(&Client::recvThread, this);
-        receiver.detach();
-   }
-
-    bool Client::isReady() {
-        return readyToConnect;
-    }
-
-    void Client::recvThread() {
-        int length;
-        while (connected) {
-            ZeroMemory(messageBuffer, sizeof(messageBuffer));
-            length = recv(clientSocket, messageBuffer, sizeof(messageBuffer), 0);
-            if (length > 0) {
-                std::string messageIn = messageBuffer;
-                messages.push(messageIn);
-            }
-            else if (length < 0) {
-                disconnect();
-            }
-
-        }
-    }
-
-    int Client::getNumberOfMessages() {
-        return messages.size();
-    }
-
-    std::string Client::getNextMessage() {
-        std::string messageStr = messages.front();
-        messages.pop();
-        return messageStr;
-
-    }
-
-    bool Client::sendMessage(std::string message) {
-        if (connected) {
-            send(clientSocket, message.c_str(), message.length(), 0);
-            return true;
-        }
-        return false;
-    }
-
-    Client::~Client() {
-        disconnect();
-    }
-
-    bool Client::disconnect() {
-        if (connected) {
-            connected = false;
-            closesocket(clientSocket);
-            readyToConnect = false;
-        }
-        return true;
-    }
-
-    bool Client::newServer(BTDevice& server) {
-        readyToConnect = true;
-        createClientSocket();
-        setServerInfo(server);
-        return readyToConnect;
-    }
-
-    
 
 }

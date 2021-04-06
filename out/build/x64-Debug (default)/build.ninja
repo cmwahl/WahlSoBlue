@@ -57,6 +57,20 @@ build CMakeFiles\WahlSoBlue.dir\WahlSoBlue.cpp.obj: CXX_COMPILER__WahlSoBlue_Deb
   TARGET_COMPILE_PDB = CMakeFiles\WahlSoBlue.dir\
   TARGET_PDB = WahlSoBlue.pdb
 
+build CMakeFiles\WahlSoBlue.dir\WahlSoBlueClient.cpp.obj: CXX_COMPILER__WahlSoBlue_Debug ..\..\..\WahlSoBlueClient.cpp || cmake_object_order_depends_target_WahlSoBlue_Debug
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
+  OBJECT_DIR = CMakeFiles\WahlSoBlue.dir
+  OBJECT_FILE_DIR = CMakeFiles\WahlSoBlue.dir
+  TARGET_COMPILE_PDB = CMakeFiles\WahlSoBlue.dir\
+  TARGET_PDB = WahlSoBlue.pdb
+
+build CMakeFiles\WahlSoBlue.dir\WahlSoBlueServer.cpp.obj: CXX_COMPILER__WahlSoBlue_Debug ..\..\..\WahlSoBlueServer.cpp || cmake_object_order_depends_target_WahlSoBlue_Debug
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
+  OBJECT_DIR = CMakeFiles\WahlSoBlue.dir
+  OBJECT_FILE_DIR = CMakeFiles\WahlSoBlue.dir
+  TARGET_COMPILE_PDB = CMakeFiles\WahlSoBlue.dir\
+  TARGET_PDB = WahlSoBlue.pdb
+
 build CMakeFiles\WahlSoBlue.dir\main.cpp.obj: CXX_COMPILER__WahlSoBlue_Debug ..\..\..\main.cpp || cmake_object_order_depends_target_WahlSoBlue_Debug
   FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
   OBJECT_DIR = CMakeFiles\WahlSoBlue.dir
@@ -72,7 +86,7 @@ build CMakeFiles\WahlSoBlue.dir\main.cpp.obj: CXX_COMPILER__WahlSoBlue_Debug ..\
 #############################################
 # Link the executable WahlSoBlue.exe
 
-build WahlSoBlue.exe: CXX_EXECUTABLE_LINKER__WahlSoBlue_Debug CMakeFiles\WahlSoBlue.dir\GuidHelper.cpp.obj CMakeFiles\WahlSoBlue.dir\WahlSoBlue.cpp.obj CMakeFiles\WahlSoBlue.dir\main.cpp.obj
+build WahlSoBlue.exe: CXX_EXECUTABLE_LINKER__WahlSoBlue_Debug CMakeFiles\WahlSoBlue.dir\GuidHelper.cpp.obj CMakeFiles\WahlSoBlue.dir\WahlSoBlue.cpp.obj CMakeFiles\WahlSoBlue.dir\WahlSoBlueClient.cpp.obj CMakeFiles\WahlSoBlue.dir\WahlSoBlueServer.cpp.obj CMakeFiles\WahlSoBlue.dir\main.cpp.obj
   FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
   LINK_FLAGS = /machine:x64 /debug /INCREMENTAL /subsystem:console
   LINK_LIBRARIES = kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib
